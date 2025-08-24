@@ -10,19 +10,23 @@ export default function Login(){
   const nav = useNavigate()
 
   const submit = async(e)=>{
-    e.preventDefault()
-    setErr('')
-    try{
-      const r = await api.post('/auth/login',{
-        doctor_id: doctorId,  // <-- send doctor_id instead of username
-        password
-      })
-      localStorage.setItem('token', r.data.access_token)
-      nav('/home')
-    }catch(e){ 
-      setErr(e?.response?.data?.error || 'Login failed') 
-    }
+  e.preventDefault()
+  setErr('')
+
+  if (!doctorId || !password) {
+    setErr("Please fill in both Doctor ID and Password")
+    return
   }
+
+  try {
+    const r = await api.post('/auth/login', { doctor_id: doctorId, password })
+    localStorage.setItem('token', r.data.access_token)
+    nav('/home')
+  } catch(e){ 
+    setErr(e?.response?.data?.error || 'Login failed') 
+  }
+}
+
 
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
